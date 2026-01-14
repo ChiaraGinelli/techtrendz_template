@@ -10,31 +10,44 @@ require_once 'templates/header.php';
 $errors = [];
 $messages = [];
 
-// Si le formulaire a été souis
+// Si le formulaire a été soumis
 if (isset($_POST['loginUser'])) {
     //@todo appeler une méthode verifyUserLoginPassword qui retourne false ou retourne un tableau avec l'utisateur
     $user = verifyUserLoginPassword($pdo, $_POST['email'], $_POST['password']);
+    if ($user) {
+        session_regenerate_id(true);
+        $_SESSION["user"]=$user;
+        if ($user["role"] === "admin") {
+            header("Location: admin/index.php");
+        } else {
+            header("Location: index.php");
+        }
+    }
 
     /* @todo si on récupère un utilisateur, alors on stocke l'utilisateur dans la session
         et on redirige l'utilisateur soit vers l'admin (si role admin) soit vers l'accueil
         sinon on affiche une erreur "Email ou mot de passe incorrect"
     */
-
-  }
+}
 
 ?>
-    <h1>Login</h1>
+<h1>Login</h1>
 
-    <?php // @todo afficher les erreurs avec la structure suivante :
-        /*
+<?php // @todo afficher les erreurs avec la structure suivante :
+/*
         <div class="alert alert-danger" role="alert">
-            Utilisatuer ou mot de passe incorrect
+            Utilisateur ou mot de passe incorrect
         </div>
         */
-    ?>
+if (isset($user) && $user === false): ?>
+    <div class="alert alert-danger mt-3" role="alert">
+        Email ou mot de passe incorrect.
+    </div>
+<?php endif; ?>
 
-    <form method="POST">
-        <div class="mb-3">
+
+<form method="POST">
+    <div class="mb-3">
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" id="email" name="email">
@@ -46,8 +59,8 @@ if (isset($_POST['loginUser'])) {
 
         <input type="submit" name="loginUser" class="btn btn-primary" value="Enregistrer">
 
-    </form>
+</form>
 
-    <?php
+<?php
 require_once 'templates/footer.php';
 ?>
