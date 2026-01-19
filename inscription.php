@@ -32,7 +32,15 @@ if (isset($_POST['addUser'])) {
     <div class="alert alert-danger" role="alert">
         Une erreur est survenue durant l'inscription
     </div>
-<?php endif; ?>
+
+<?php
+elseif (isset($error) && !$error): ?>
+    <div class="alert alert-success" role="alert">
+        Merci pour votre inscription
+    </div>
+<?php
+
+endif; ?>
 
 <form method="POST">
     <div class="mb-3">
